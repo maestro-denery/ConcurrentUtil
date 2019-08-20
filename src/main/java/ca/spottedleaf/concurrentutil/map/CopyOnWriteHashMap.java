@@ -183,7 +183,7 @@ public class CopyOnWriteHashMap<K, V> implements ConcurrentMap<K, V> {
         final V ret;
         synchronized (this) {
             //noinspection unchecked
-            final HashMap<K, V> clone = (HashMap<K, V>) this.getMapPlain().clone();
+            final HashMap<K, V> clone = (HashMap<K, V>)this.getMapPlain().clone();
             ret = clone.put(key, value);
             this.map = clone;
         }
@@ -203,7 +203,7 @@ public class CopyOnWriteHashMap<K, V> implements ConcurrentMap<K, V> {
         }
         synchronized (this) {
             //noinspection unchecked
-            final HashMap<K, V> clone = (HashMap<K, V>) this.getMapPlain().clone();
+            final HashMap<K, V> clone = (HashMap<K, V>)this.getMapPlain().clone();
 
             for (final Map.Entry<? extends K, ? extends V> entry : map.entrySet()) {
                 final K key;
@@ -265,7 +265,7 @@ public class CopyOnWriteHashMap<K, V> implements ConcurrentMap<K, V> {
             }
 
             //noinspection unchecked
-            final HashMap<K, V> clone = (HashMap<K, V>) map.clone();
+            final HashMap<K, V> clone = (HashMap<K, V>)map.clone();
             clone.remove(key);
             this.map = map;
         }
@@ -287,7 +287,7 @@ public class CopyOnWriteHashMap<K, V> implements ConcurrentMap<K, V> {
             }
 
             //noinspection unchecked
-            final HashMap<K, V> clone = (HashMap<K, V>) map.clone();
+            final HashMap<K, V> clone = (HashMap<K, V>)map.clone();
             clone.put(key, newValue);
             this.map = clone;
         }
@@ -307,7 +307,7 @@ public class CopyOnWriteHashMap<K, V> implements ConcurrentMap<K, V> {
             }
 
             //noinspection unchecked
-            final HashMap<K, V> clone = (HashMap<K, V>) map.clone();
+            final HashMap<K, V> clone = (HashMap<K, V>)map.clone();
             ret = clone.put(key, value);
             this.map = clone;
         }
@@ -477,6 +477,7 @@ public class CopyOnWriteHashMap<K, V> implements ConcurrentMap<K, V> {
         return (Map<K, V>)this.map.clone();
     }
 
+    @Override
     public CopyOnWriteHashMap<K, V> clone() {
         return new CopyOnWriteHashMap<>(this.map, this.loadFactor);
     }

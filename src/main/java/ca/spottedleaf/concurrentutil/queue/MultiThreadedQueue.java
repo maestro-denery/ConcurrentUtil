@@ -916,7 +916,7 @@ public class MultiThreadedQueue<E> implements Queue<E> {
                 if (compared == next) {
                     /* Added */
                     /* Avoid CASing on tail more than we need to */
-                    /* CAS to avoid setting an out-of-date tail */
+                    /* "CAS" to avoid setting an out-of-date tail */
                     if (this.getTailOpaque() == currTail) {
                         this.setTailOpaque(tail);
                     }
@@ -995,14 +995,9 @@ public class MultiThreadedQueue<E> implements Queue<E> {
     protected final E removeHead(final Predicate<E> predicate) {
         int failures = 0;
         for (LinkedNode<E> head = this.getHeadOpaque(), curr = head;;) {
-            /* It has been experimentally shown that placing the reads before the backoff results in significantly greater performance */
-            /* It is likely due to a cache miss caused by another write to the next field */
-            final E currentVal = curr.getElementVolatile();
-            final LinkedNode<E> next = curr.getNextOpaque();
-
-            if (next == curr) {
-                return null;
-            }
+            // volatile here synchronizes-with writes to element
+            final LinkedNode<E> next = curr.getNextVolatile();
+            final E currentVal = curr.getElementPlain();
 
             for (int i = 0; i < failures; ++i) {
                 ConcurrentUtil.pause();
@@ -1018,6 +1013,9 @@ public class MultiThreadedQueue<E> implements Queue<E> {
                 }
                 if (curr.getAndSetElementVolatile(null) == null) {
                     /* Failed to get head */
+                    if (curr == (curr = next) || next == null) {
+                        return null;
+                    }
                     ++failures;
                     continue;
                 }
@@ -1030,7 +1028,7 @@ public class MultiThreadedQueue<E> implements Queue<E> {
                 return currentVal;
             }
 
-            if (next == null) {
+            if (curr == next || next == null) {
                 /* Try to update stale head */
                 if (curr != head && this.getHeadOpaque() == head) {
                     this.setHeadOpaque(curr);
@@ -1055,12 +1053,8 @@ public class MultiThreadedQueue<E> implements Queue<E> {
     protected final E removeHead() {
         int failures = 0;
         for (LinkedNode<E> head = this.getHeadOpaque(), curr = head;;) {
-            final E currentVal = curr.getElementVolatile();
-            final LinkedNode<E> next = curr.getNextOpaque();
-
-            if (next == curr) {
-                return null;
-            }
+            final LinkedNode<E> next = curr.getNextVolatile();
+            final E currentVal = curr.getElementPlain();
 
             for (int i = 0; i < failures; ++i) {
                 ConcurrentUtil.pause();
@@ -1084,7 +1078,7 @@ public class MultiThreadedQueue<E> implements Queue<E> {
                 return currentVal;
             }
 
-            if (next == null) {
+            if (curr == next || next == null) {
                 /* Try to update stale head */
                 if (curr != head && this.getHeadOpaque() == head) {
                     this.setHeadOpaque(curr);
@@ -1172,7 +1166,6 @@ public class MultiThreadedQueue<E> implements Queue<E> {
         for (;;) {
             /* Volatile acquires with the write to the element field */
             final E currentVal = curr.getElementPlain();
-
             LinkedNode<E> next = curr.getNextVolatile();
 
             if (next == curr) {
@@ -1184,6 +1177,7 @@ public class MultiThreadedQueue<E> implements Queue<E> {
                 if (next == null) {
                     if (preventAdds && (next = curr.compareExchangeNextVolatile(null, curr)) != null) {
                         // failed to prevent adds, continue
+                        curr = next;
                         continue;
                     } else {
                         // we're done here

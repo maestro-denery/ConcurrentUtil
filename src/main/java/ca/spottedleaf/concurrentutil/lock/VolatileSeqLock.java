@@ -9,7 +9,7 @@ import java.lang.invoke.VarHandle;
  * multiple writer threads to attempt to acquire the lock.
  * @see SeqLock
  */
-public class VolatileSeqLock implements SeqLock {
+public final class VolatileSeqLock implements SeqLock {
 
     protected volatile int lock;
 

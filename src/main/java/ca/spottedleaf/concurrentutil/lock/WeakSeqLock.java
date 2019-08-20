@@ -10,7 +10,7 @@ import java.lang.invoke.VarHandle;
  * the same effect as calling {@link #tryAcquireWrite()}. Writes are not guaranteed to be published immediately, and
  * loads can be re-ordered across write lock handling.
  */
-public class WeakSeqLock implements SeqLock {
+public final class WeakSeqLock implements SeqLock {
 
     protected int lock;
 

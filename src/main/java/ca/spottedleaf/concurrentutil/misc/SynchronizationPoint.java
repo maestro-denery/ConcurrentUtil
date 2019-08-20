@@ -110,7 +110,7 @@ public class SynchronizationPoint {
             final long start = System.nanoTime();
 
             for (;;) {
-                ConcurrentUtil.pause();
+                Thread.onSpinWait();
 
                 final long currTime = System.nanoTime();
 

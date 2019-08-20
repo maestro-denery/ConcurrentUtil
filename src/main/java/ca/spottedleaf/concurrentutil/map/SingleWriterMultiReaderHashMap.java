@@ -222,8 +222,7 @@ public class SingleWriterMultiReaderHashMap<K, V> implements Map<K, V>, Iterable
         final TableEntry<K, V>[] table = this.getTableAcquire();
 
         for (int i = 0, len = table.length; i < len; ++i) {
-            for (TableEntry<K, V> curr = ArrayUtil.getOpaque(table, i);
-                 curr != null; curr = curr.getNextOpaque()) {
+            for (TableEntry<K, V> curr = ArrayUtil.getOpaque(table, i); curr != null; curr = curr.getNextOpaque()) {
 
                 final V value = curr.getValueAcquire();
                 if (value == null) {
@@ -250,8 +249,7 @@ public class SingleWriterMultiReaderHashMap<K, V> implements Map<K, V>, Iterable
         final TableEntry<K, V>[] table = this.getTableAcquire();
 
         for (int i = 0, len = table.length; i < len; ++i) {
-            for (TableEntry<K, V> curr = ArrayUtil.getOpaque(table, i);
-                    curr != null; curr = curr.getNextOpaque()) {
+            for (TableEntry<K, V> curr = ArrayUtil.getOpaque(table, i); curr != null; curr = curr.getNextOpaque()) {
 
                 final V value = curr.getValueAcquire();
                 if (value == null) {
@@ -340,7 +338,6 @@ public class SingleWriterMultiReaderHashMap<K, V> implements Map<K, V>, Iterable
     public void forEachEntry(final Consumer<? super Map.Entry<K, V>> action) {
         this.forEach(action);
     }
-
 
     /**
      * Provides the specified consumer with all keys contained within this map.

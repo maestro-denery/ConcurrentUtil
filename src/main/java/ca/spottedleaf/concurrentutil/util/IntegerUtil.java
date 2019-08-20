@@ -149,6 +149,12 @@ public final class IntegerUtil {
         return (mask ^ val) - mask; // if val < 0, then (0 ^ val) - 0 else (-1 ^ val) + 1
     }
 
+    public static long branchlessAbs(final long val) {
+        // -n = -1 ^ n + 1
+        final long mask = val >> (Long.SIZE - 1); // -1 if < 0, 0 if >= 0
+        return (mask ^ val) - mask; // if val < 0, then (0 ^ val) - 0 else (-1 ^ val) + 1
+    }
+
     //https://github.com/skeeto/hash-prospector for hash functions
 
     //score = ~590.47984224483832
