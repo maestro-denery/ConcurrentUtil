@@ -42,6 +42,7 @@ tasks {
 
     jcstress {
         jcstressDependency = "org.openjdk.jcstress:jcstress-core:0.15"
+        mode = "quick"
     }
 
     jmh {
